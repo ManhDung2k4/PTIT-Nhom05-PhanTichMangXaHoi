@@ -1,17 +1,9 @@
 package vn.edu.socialgraph.algorithm;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-
 import vn.edu.socialgraph.model.SocialGraph;
 import vn.edu.socialgraph.model.User;
+
+import java.util.*;
 
 /**
  * Utility class providing BFS algorithms for the social graph.
