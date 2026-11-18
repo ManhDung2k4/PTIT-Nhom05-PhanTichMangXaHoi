@@ -13,25 +13,22 @@ import java.util.Set;
 import vn.edu.socialgraph.model.SocialGraph;
 import vn.edu.socialgraph.model.User;
 
-/**
- * Utility class providing BFS algorithms for the social graph.
- * Includes BFS traversal and FOAF friend suggestions.
- */
+
 public final class BfsAlgorithms {
     private BfsAlgorithms() {}
 
     /**
      * Duyệt toàn bộ thành phần liên thông của đồ thị bắt đầu từ đỉnh {@code startId} theo chiều rộng (BFS).
-     * <p>
-     * <b>Nguyên lý hoạt động:</b>
+     * 
+     * Nguyên lý hoạt động:
      * Sử dụng hàng đợi FIFO (Queue) và tập hợp đỉnh đã thăm (Set visited).
      * Mỗi lần lấy đỉnh ở đầu hàng đợi ra, thăm tất cả các đỉnh kề chưa được thăm và đẩy vào hàng đợi.
-     * <p>
-     * <b>Độ phức tạp:</b>
-     * <ul>
-     *   <li>Thời gian: O(V + E) với V là số đỉnh, E là số cạnh trong thành phần liên thông.</li>
-     *   <li>Không gian: O(V) để lưu hàng đợi và tập visited.</li>
-     * </ul>
+     * 
+     * Độ phức tạp:
+     * 
+     *   Thời gian: O(V + E) với V là số đỉnh, E là số cạnh trong thành phần liên thông.
+     *   Không gian: O(V) để lưu hàng đợi và tập visited.
+     * 
      *
      * @param graph   Đối tượng đồ thị {@link SocialGraph}
      * @param startId ID của người dùng bắt đầu duyệt
@@ -60,21 +57,21 @@ public final class BfsAlgorithms {
 
     /**
      * Gợi ý bạn bè mới cho người dùng {@code userId} bằng BFS (Friend of a Friend - FOAF).
-     * <p>
-     * <b>Quy tắc gợi ý:</b>
-     * <ol>
-     *   <li>Chỉ xét các người dùng ở khoảng cách đúng bằng 2 (bạn của bạn).</li>
-     *   <li>Loại bỏ chính người dùng đó và những người đã là bạn bè trực tiếp (khoảng cách 1).</li>
-     *   <li>Đếm số lượng bạn chung (số đường đi độ dài 2 nối giữa 2 người).</li>
-     *   <li>Ưu tiên xếp hạng: Người có nhiều bạn chung hơn đứng trước;
-     *       nếu bằng điểm thì sắp xếp theo tên hiển thị theo thứ tự bảng chữ cái.</li>
-     * </ol>
-     * <p>
-     * <b>Độ phức tạp:</b>
-     * <ul>
-     *   <li>Thời gian: O(deg(u) * max_deg) &le; O(V + E).</li>
-     *   <li>Không gian: O(V) lưu trữ bảng đếm tần suất và hàng đợi.</li>
-     * </ul>
+     * 
+     * Quy tắc gợi ý:
+     * 
+     *   Chỉ xét các người dùng ở khoảng cách đúng bằng 2 (bạn của bạn).
+     *   Loại bỏ chính người dùng đó và những người đã là bạn bè trực tiếp (khoảng cách 1).
+     *   Đếm số lượng bạn chung (số đường đi độ dài 2 nối giữa 2 người).
+     *   Ưu tiên xếp hạng: Người có nhiều bạn chung hơn đứng trước;
+     *       nếu bằng điểm thì sắp xếp theo tên hiển thị theo thứ tự bảng chữ cái.
+     * 
+     * 
+     * Độ phức tạp:
+     * 
+     *   Thời gian: O(deg(u) * max_deg) &le; O(V + E).
+     *   Không gian: O(V) lưu trữ bảng đếm tần suất và hàng đợi.
+     * 
      *
      * @param graph  Đối tượng đồ thị {@link SocialGraph}
      * @param userId ID người dùng cần nhận gợi ý

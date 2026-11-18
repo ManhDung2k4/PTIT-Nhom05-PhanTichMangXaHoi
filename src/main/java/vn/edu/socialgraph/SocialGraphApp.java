@@ -13,8 +13,23 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vn.edu.socialgraph.algorithm.BfsAlgorithms;
@@ -24,12 +39,7 @@ import vn.edu.socialgraph.model.SocialGraph;
 import vn.edu.socialgraph.model.User;
 import vn.edu.socialgraph.ui.GraphPane;
 
-/**
- * Ứng dụng mô phỏng và phân tích mạng xã hội bằng đồ thị vô hướng trên nền JavaFX.
- * <p>
- * Tích hợp đầy đủ các thuật toán cốt lõi: BFS, DFS, gợi ý bạn bè (FOAF), tìm đường đi ngắn nhất,
- * đọc/ghi file CSV và trực quan hóa tương tác 2 chiều giữa danh sách và sơ đồ đồ thị.
- */
+
 public final class SocialGraphApp extends Application {
     private SocialGraph graph = sampleGraph();
     private final CsvGraphRepository repository = new CsvGraphRepository();

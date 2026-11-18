@@ -1,6 +1,11 @@
 package vn.edu.socialgraph.ui;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javafx.geometry.Point2D;
@@ -15,26 +20,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import vn.edu.socialgraph.model.SocialGraph;
 import vn.edu.socialgraph.model.User;
 
-/**
- * Khung trực quan hóa Đồ thị mạng xã hội (Graph Visualization Pane).
- * <p>
- * Tính năng nổi bật:
- * <ul>
- *   <li>Tự động bố trí các đỉnh theo vòng tròn (Circular Layout) cân đối.</li>
- *   <li>Hỗ trợ kéo - thả (Drag and Drop) từng đỉnh linh hoạt.</li>
- *   <li>Bảng màu pastel dịu nhẹ, êm mắt, phân biệt rõ Người 1 (Nguồn - Tím nhạt) và Người 2 (Mục tiêu - Xanh mint).</li>
- *   <li>Highlight trực quan đường đi ngắn nhất (cạnh màu san hô mềm mại).</li>
- *   <li>Highlight tập đỉnh kết quả của thuật toán (vàng hổ phách dịu).</li>
- *   <li>Menu chuột phải trên đỉnh để nhanh chóng gán Người 1 (Nguồn) hoặc Người 2 (Mục tiêu).</li>
- *   <li>Tooltip hiển thị chi tiết thông tin người dùng và số bạn bè khi rê chuột.</li>
- * </ul>
- */
 public final class GraphPane extends Pane {
     private SocialGraph graph;
     private final Map<String, Point2D> customPositions = new HashMap<>();
@@ -125,10 +113,7 @@ public final class GraphPane extends Pane {
         redraw();
     }
 
-    /**
-     * Highlight trực quan đường đi ngắn nhất: đổi màu các đỉnh trên đường đi
-     * và làm nổi bật các cạnh nối giữa các đỉnh liên tiếp.
-     */
+    
     public void highlightPath(List<User> path) {
         highlightedUserIds.clear();
         highlightedEdgeKeys.clear();

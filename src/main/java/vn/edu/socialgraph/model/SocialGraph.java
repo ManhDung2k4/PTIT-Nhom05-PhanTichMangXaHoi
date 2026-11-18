@@ -1,15 +1,23 @@
 package vn.edu.socialgraph.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Cấu trúc dữ liệu Đồ thị mạng xã hội (Social Graph).
- * <p>
+ *
  * Đồ thị được biểu diễn dưới dạng <b>Danh sách kề (Adjacency List)</b> vô hướng:
- * <ul>
- *   <li>Mỗi đỉnh (Vertex) là một {@link User}.</li>
- *   <li>Mỗi cạnh (Edge) biểu diễn mối quan hệ bạn bè 2 chiều giữa 2 người dùng.</li>
- * </ul>
+ * 
+ *   Mỗi đỉnh (Vertex) là một {@link User}.
+ *   Mỗi cạnh (Edge) biểu diễn mối quan hệ bạn bè 2 chiều giữa 2 người dùng.
+ * 
  * Đồ thị hỗ trợ các thao tác cơ bản: thêm/xóa đỉnh, thêm/hủy cạnh, truy vấn láng giềng, tìm bạn chung.
  */
 public final class SocialGraph {

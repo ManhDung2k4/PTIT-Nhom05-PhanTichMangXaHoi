@@ -1,9 +1,18 @@
 package vn.edu.socialgraph.algorithm;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
 import vn.edu.socialgraph.model.SocialGraph;
 import vn.edu.socialgraph.model.User;
-
-import java.util.*;
 
 /**
  * Utility class providing DFS traversal, shortest path (BFS), and friend suggestions using DFS.
@@ -12,17 +21,17 @@ public final class DfsAndPathAlgorithms {
     private DfsAndPathAlgorithms() {}
 
     /**
-     * Duyệt đồ thị theo chiều sâu (Depth-First Search - DFS) bắt đầu từ {@code startId}.
-     * <p>
-     * <b>Nguyên lý hoạt động:</b>
+     * Duyệt đồ thị theo chiều sâu (DFS) bắt đầu từ {@code startId}.
+     * 
+     * Nguyên lý hoạt động:
      * Xuất phát từ đỉnh hiện tại, đệ quy đi sâu vào từng nhánh đỉnh kề chưa được thăm trước
      * khi quay lui (backtracking).
-     * <p>
-     * <b>Độ phức tạp:</b>
-     * <ul>
-     *   <li>Thời gian: O(V + E) với V là số đỉnh, E là số cạnh trong thành phần liên thông.</li>
-     *   <li>Không gian: O(V) cho ngăn xếp đệ quy (call stack) và tập visited.</li>
-     * </ul>
+     * 
+     * Độ phức tạp:
+     * 
+     *   Thời gian: O(V + E) với V là số đỉnh, E là số cạnh trong thành phần liên thông.
+     *   Không gian: O(V) cho ngăn xếp đệ quy (call stack) và tập visited.
+     * 
      *
      * @param graph   Đối tượng đồ thị {@link SocialGraph}
      * @param startId ID người dùng bắt đầu duyệt
@@ -45,17 +54,17 @@ public final class DfsAndPathAlgorithms {
 
     /**
      * Tìm đường đi ngắn nhất (ít cạnh nhất) giữa 2 người dùng {@code fromId} và {@code toId}.
-     * <p>
-     * <b>Nguyên lý hoạt động:</b>
+     * 
+     * Nguyên lý hoạt động:
      * Vì đồ thị vô hướng không trọng số, thuật toán BFS đảm bảo đường đi đầu tiên tìm thấy
      * tới đỉnh đích luôn là đường đi ngắn nhất (tối thiểu số cạnh trung gian).
      * Bảng {@code parent} được sử dụng để truy vết ngược từ đỉnh đích về đỉnh nguồn.
-     * <p>
-     * <b>Độ phức tạp:</b>
-     * <ul>
-     *   <li>Thời gian: O(V + E).</li>
-     *   <li>Không gian: O(V) để lưu hàng đợi, tập visited và bảng parent.</li>
-     * </ul>
+     * 
+     * Độ phức tạp:
+     * 
+     *   Thời gian: O(V + E).
+     *   Không gian: O(V) để lưu hàng đợi, tập visited và bảng parent.
+     * 
      *
      * @param graph  Đối tượng đồ thị {@link SocialGraph}
      * @param fromId ID người dùng nguồn
@@ -105,17 +114,17 @@ public final class DfsAndPathAlgorithms {
 
     /**
      * Gợi ý bạn bè mới bằng phương pháp DFS mở rộng đệ quy tới độ sâu 2.
-     * <p>
-     * <b>Nguyên lý hoạt động:</b>
+     * 
+     * Nguyên lý hoạt động:
      * Từ các bạn trực tiếp (độ sâu 1), tiếp tục duyệt sang bạn bè của họ (độ sâu 2).
      * Loại bỏ chính người dùng và bạn bè trực tiếp, đếm số đường đi để tính số bạn chung,
      * sau đó sắp xếp theo số bạn chung giảm dần (hòa thì xếp theo tên).
-     * <p>
-     * <b>Độ phức tạp:</b>
-     * <ul>
-     *   <li>Thời gian: O(V + E).</li>
-     *   <li>Không gian: O(V).</li>
-     * </ul>
+     * 
+     * Độ phức tạp:
+     * 
+     *   Thời gian: O(V + E).
+     *   Không gian: O(V).
+     * 
      *
      * @param graph  Đối tượng đồ thị {@link SocialGraph}
      * @param userId ID người dùng cần gợi ý

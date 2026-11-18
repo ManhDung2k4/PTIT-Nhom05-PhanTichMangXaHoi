@@ -1,22 +1,25 @@
 package vn.edu.socialgraph.io;
 
-import vn.edu.socialgraph.model.SocialGraph;
-import vn.edu.socialgraph.model.User;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import vn.edu.socialgraph.model.SocialGraph;
+import vn.edu.socialgraph.model.User;
 
 /**
  * Lớp chịu trách nhiệm lưu trữ và đọc dữ liệu đồ thị từ tập tin định dạng CSV.
- * <p>
- * <b>Quy ước cấu trúc file CSV:</b>
- * <ul>
- *   <li>Dòng khai báo người dùng (Đỉnh): {@code U,"id","tên"}</li>
- *   <li>Dòng khai báo quan hệ bạn bè (Cạnh): {@code F,"id1","id2"}</li>
- * </ul>
+ * 
+ * Quy ước cấu trúc file CSV:</b>
+ * 
+ *   Dòng khai báo người dùng (Đỉnh): {@code U,"id","tên"}
+ *   Dòng khai báo quan hệ bạn bè (Cạnh): {@code F,"id1","id2"}
+ * 
  * Hỗ trợ đầy đủ ký tự đặc biệt như dấu phẩy, dấu ngoặc kép (escape theo chuẩn RFC 4180)
  * và bảng mã UTF-8 tiếng Việt có dấu.
  */
