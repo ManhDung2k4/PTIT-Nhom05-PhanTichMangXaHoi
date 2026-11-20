@@ -130,6 +130,33 @@ public final class GraphPane extends Pane {
         redraw();
     }
 
+    /**
+     * Highlight đồng thời: các đỉnh trong quá trình duyệt và đường đi nối từ nguồn tới đích.
+     *
+     * @param visited Danh sách các đỉnh đã duyệt
+     * @param path    Danh sách các đỉnh thuộc đường đi (nếu tìm thấy)
+     */
+    public void highlightTraversalAndPath(List<User> visited, List<User> path) {
+        highlightedUserIds.clear();
+        highlightedEdgeKeys.clear();
+        if (visited != null) {
+            for (User u : visited) {
+                highlightedUserIds.add(u.getId());
+            }
+        }
+        if (path != null && !path.isEmpty()) {
+            for (User u : path) {
+                highlightedUserIds.add(u.getId());
+            }
+            for (int i = 0; i < path.size() - 1; i++) {
+                String u1 = path.get(i).getId();
+                String u2 = path.get(i + 1).getId();
+                highlightedEdgeKeys.add(edgeKey(u1, u2));
+            }
+        }
+        redraw();
+    }
+
     /** Xóa toàn bộ trạng thái highlight thuật toán. */
     public void clearHighlights() {
         highlightedUserIds.clear();

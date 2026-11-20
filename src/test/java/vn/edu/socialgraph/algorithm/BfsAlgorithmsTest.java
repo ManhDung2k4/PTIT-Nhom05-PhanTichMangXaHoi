@@ -25,6 +25,14 @@ class BfsAlgorithmsTest {
     }
 
     @Test
+    void traversesGraphByBreadthToTarget() {
+        assertEquals(
+                List.of("u1", "u2", "u3"),
+                ids(BfsAlgorithms.bfs(sampleGraph(), "u1", "u3"))
+        );
+    }
+
+    @Test
     void suggestsFriendOfFriend() {
         assertEquals(
                 List.of("u3"),

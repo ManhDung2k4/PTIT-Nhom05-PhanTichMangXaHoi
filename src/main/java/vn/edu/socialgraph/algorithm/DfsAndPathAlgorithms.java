@@ -53,6 +53,82 @@ public final class DfsAndPathAlgorithms {
     }
 
     /**
+     * Duyệt theo chiều sâu (DFS) từ đỉnh xuất phát {@code startId} cho đến khi gặp đỉnh đích {@code targetId}.
+     * Quá trình duyệt dừng lại ngay khi đỉnh đích được thăm.
+     *
+     * @param graph    Đối tượng đồ thị {@link SocialGraph}
+     * @param startId  ID người dùng xuất phát
+     * @param targetId ID người dùng đích
+     * @return Danh sách các {@link User} theo thứ tự thăm của DFS cho đến khi gặp đích
+     */
+    public static List<User> dfs(SocialGraph graph, String startId, String targetId) {
+        graph.requireUser(startId);
+        graph.requireUser(targetId);
+
+        List<User> result = new ArrayList<>();
+        Set<String> visited = new LinkedHashSet<>();
+        dfsVisitTarget(graph, startId, targetId, visited, result);
+        return result;
+    }
+
+    private static boolean dfsVisitTarget(SocialGraph graph, String current, String target,
+                                          Set<String> visited, List<User> result) {
+        if (!visited.add(current)) return false;
+        result.add(graph.requireUser(current));
+        if (current.equals(target)) return true;
+        for (String next : graph.neighborIds(current)) {
+            if (!visited.contains(next)) {
+                if (dfsVisitTarget(graph, next, target, visited, result)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Tìm đường đi từ {@code fromId} tới {@code toId} bằng thuật toán DFS.
+     *
+     * @param graph  Đối tượng đồ thị {@link SocialGraph}
+     * @param fromId ID người dùng nguồn
+     * @param toId   ID người dùng đích
+     * @return Danh sách các {@link User} liên tiếp tạo nên đường đi theo DFS (rỗng nếu không có đường đi)
+     */
+    public static List<User> dfsPath(SocialGraph graph, String fromId, String toId) {
+        graph.requireUser(fromId);
+        graph.requireUser(toId);
+
+        if (fromId.equals(toId)) {
+            return List.of(graph.requireUser(fromId));
+        }
+
+        Map<String, String> parent = new HashMap<>();
+        Set<String> visited = new HashSet<>();
+        boolean found = dfsPathVisit(graph, fromId, toId, visited, parent);
+        if (!found) {
+            return List.of();
+        }
+        return buildPath(graph, parent, toId);
+    }
+
+    private static boolean dfsPathVisit(SocialGraph graph, String current, String target,
+                                        Set<String> visited, Map<String, String> parent) {
+        visited.add(current);
+        if (current.equals(target)) {
+            return true;
+        }
+        for (String next : graph.neighborIds(current)) {
+            if (!visited.contains(next)) {
+                parent.put(next, current);
+                if (dfsPathVisit(graph, next, target, visited, parent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Tìm đường đi ngắn nhất (ít cạnh nhất) giữa 2 người dùng {@code fromId} và {@code toId}.
      * 
      * Nguyên lý hoạt động:

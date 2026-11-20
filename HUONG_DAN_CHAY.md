@@ -31,20 +31,22 @@ mvn clean package
    - **Sửa tên:** Chọn người dùng từ danh sách → Nhập tên mới → Bấm **Sửa tên**.
    - **Xóa:** Chọn người dùng → Bấm **Xóa** (tự động xóa toàn bộ liên kết liên quan).
 
-2. **Chọn Người 1 (Nguồn) và Người 2 (Mục tiêu):**
-   - **Người 1 (Màu tím - Nguồn):** Click chuột trái vào đỉnh trên sơ đồ hoặc chọn trong danh sách rồi bấm **📌 Chọn Người 1**.
-   - **Người 2 (Màu xanh lục - Mục tiêu):** Click chuột phải vào đỉnh trên sơ đồ chọn **🎯 Đặt làm Người 2 (Mục tiêu)**, hoặc chọn trong danh sách rồi bấm **🎯 Đặt làm mục tiêu**.
+2. **Chọn Đỉnh xuất phát (Nguồn) và Đỉnh đích (Mục tiêu):**
+   - **Đỉnh xuất phát (Người 1 - Màu tím):** Click chuột trái vào đỉnh trên sơ đồ hoặc chọn trong danh sách rồi bấm **📌 Chọn Người 1**.
+   - **Đỉnh đích (Người 2 - Màu xanh lục):** Click chuột phải vào đỉnh trên sơ đồ chọn **🎯 Đặt làm Người 2 (Mục tiêu)**, hoặc chọn trong danh sách rồi bấm **🎯 Đặt làm mục tiêu**.
    - **Đổi chỗ / Xóa:** Bấm **⇄ Đổi chỗ 1 & 2** để hoán đổi nhanh, hoặc **✕ Xóa chọn** để chọn lại.
 
 3. **Thao tác quan hệ & Thuật toán:**
-   - **Thao tác 2 người (Người 1 & Người 2):**
+   - **Thao tác giữa 2 đỉnh (Xuất phát ➔ Đích):**
+     - **Duyệt BFS (Nguồn ➔ Đích):** Duyệt theo chiều rộng từ đỉnh xuất phát cho đến khi chạm tới đỉnh đích; hiển thị chuỗi thứ tự duyệt và đường đi ngắn nhất tìm được.
+     - **Duyệt DFS (Nguồn ➔ Đích):** Duyệt theo chiều sâu từ đỉnh xuất phát cho đến khi chạm tới đỉnh đích; hiển thị chuỗi thứ tự duyệt và đường đi theo DFS.
+     - **Đường ngắn nhất:** Tìm đường nối ít cạnh nhất giữa 2 đỉnh.
      - **Kết bạn / Hủy kết bạn:** Bấm **➕ Kết bạn** hoặc **➖ Hủy kết bạn**.
      - **Bạn chung:** Xem danh sách và highlight các bạn chung của 2 người.
-     - **Đường ngắn nhất (BFS):** Tìm đường nối ngắn nhất (đổi màu viền đỏ đậm và highlight các đỉnh liên tiếp).
-   - **Thao tác trên Người 1:**
+   - **Thao tác trên Đỉnh xuất phát (Người 1):**
      - **Xem bạn bè:** Xem danh sách bạn bè trực tiếp của Người 1.
      - **Gợi ý bạn bè (BFS / DFS):** Tìm bạn của bạn (độ sâu 2), xếp hạng theo số bạn chung.
-     - **Duyệt BFS / DFS:** Xem thứ tự duyệt toàn bộ đồ thị từ Người 1.
+     - **Duyệt toàn bộ BFS / DFS:** Xem thứ tự duyệt toàn bộ thành phần liên thông từ Người 1.
      - **Bỏ Highlight:** Xóa toàn bộ trạng thái đánh dấu trên sơ đồ.
 
 4. **Tương tác trên sơ đồ đồ thị:**

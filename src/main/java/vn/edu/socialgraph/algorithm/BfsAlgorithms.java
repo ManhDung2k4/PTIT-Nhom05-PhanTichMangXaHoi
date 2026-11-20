@@ -56,6 +56,41 @@ public final class BfsAlgorithms {
     }
 
     /**
+     * Duyệt theo chiều rộng (BFS) từ đỉnh xuất phát {@code startId} cho đến khi gặp đỉnh đích {@code targetId}.
+     * Quá trình duyệt dừng lại ngay khi đỉnh đích được thăm.
+     *
+     * @param graph    Đối tượng đồ thị {@link SocialGraph}
+     * @param startId  ID người dùng xuất phát
+     * @param targetId ID người dùng đích
+     * @return Danh sách các {@link User} theo thứ tự thăm của BFS cho đến khi gặp đích
+     */
+    public static List<User> bfs(SocialGraph graph, String startId, String targetId) {
+        graph.requireUser(startId);
+        graph.requireUser(targetId);
+
+        List<User> result = new ArrayList<>();
+        Set<String> visited = new LinkedHashSet<>();
+        Queue<String> queue = new ArrayDeque<>();
+
+        visited.add(startId);
+        queue.add(startId);
+
+        while (!queue.isEmpty()) {
+            String current = queue.remove();
+            result.add(graph.requireUser(current));
+            if (current.equals(targetId)) {
+                break;
+            }
+            for (String next : graph.neighborIds(current)) {
+                if (visited.add(next)) {
+                    queue.add(next);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Gợi ý bạn bè mới cho người dùng {@code userId} bằng BFS (Friend of a Friend - FOAF).
      * 
      * Quy tắc gợi ý:

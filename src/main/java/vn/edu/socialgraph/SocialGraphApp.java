@@ -232,18 +232,18 @@ public final class SocialGraphApp extends Application {
             graphPane.clearHighlights();
         });
 
-        // Hàng điều khiển chọn Người 1 & Người 2
-        HBox person1Box = new HBox(8, new Label("Người 1 (Nguồn):"), sourceIdInput, sourceNameLabel, btnPickSource);
+        // Hàng điều khiển chọn Người 1 & Người 2 (Đỉnh xuất phát & Đỉnh đích)
+        HBox person1Box = new HBox(8, new Label("🚩 Đỉnh xuất phát (Nguồn):"), sourceIdInput, sourceNameLabel, btnPickSource);
         person1Box.setAlignment(Pos.CENTER_LEFT);
 
-        HBox person2Box = new HBox(8, new Label("Người 2 (Đích):  "), targetIdInput, targetNameLabel, btnSetTarget, btnSwap, btnClearSelection);
+        HBox person2Box = new HBox(8, new Label("🎯 Đỉnh đích (Mục tiêu):  "), targetIdInput, targetNameLabel, btnSetTarget, btnSwap, btnClearSelection);
         person2Box.setAlignment(Pos.CENTER_LEFT);
 
         VBox selectorBox = new VBox(6, person1Box, person2Box);
         selectorBox.setPadding(new Insets(8));
         selectorBox.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 6px; -fx-border-color: #e2e8f0; -fx-border-radius: 6px;");
 
-        // Các nút quan hệ 2 người (Người 1 và Người 2) với màu pastel dịu nhẹ
+        // Các nút thao tác giữa 2 đỉnh (Xuất phát ➔ Đích)
         Button btnConnect = createStyledButton("➕ Kết bạn", "#f0fdf4", "#166534", "#bbf7d0");
         btnConnect.setOnAction(e -> mutate(() -> {
             String u1 = requireSourceId();
@@ -269,7 +269,95 @@ public final class SocialGraphApp extends Application {
             return list;
         }));
 
-        Button btnPath = createStyledButton("🚩 Đường ngắn nhất (BFS)", "#fff7ed", "#9a3412", "#fed7aa");
+        Button btnBfsTarget = createStyledButton("🔍 Duyệt BFS (Nguồn ➔ Đích)", "#f0f9ff", "#0369a1", "#bae6fd");
+        btnBfsTarget.setOnAction(e -> act(() -> {
+            String u1 = requireSourceId();
+            String u2 = requireTargetId();
+            long startTime = System.nanoTime();
+            List<User> visited = BfsAlgorithms.bfs(graph, u1, u2);
+            List<User> path = DfsAndPathAlgorithms.shortestPath(graph, u1, u2);
+            long endTime = System.nanoTime();
+            double durationMs = (endTime - startTime) / 1_000_000.0;
+
+            graphPane.highlightTraversalAndPath(visited, path);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+            sb.append("📌 THUẬT TOÁN DUYỆT THEO CHIỀU RỘNG (BFS) TỪ NGUỒN ĐẾN ĐÍCH\n");
+            sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+            sb.append(String.format("⏱ Thời gian chạy: %.3f ms\n", durationMs));
+            sb.append(String.format("🚩 Đỉnh xuất phát (Nguồn): %s (%s)   ⟶   🎯 Đỉnh đích: %s (%s)\n",
+                    graph.requireUser(u1).getName(), u1, graph.requireUser(u2).getName(), u2));
+            sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+
+            sb.append(String.format("👉 Thứ tự các đỉnh duyệt BFS (cho đến khi gặp đích - tổng %d đỉnh):\n", visited.size()));
+            for (int i = 0; i < visited.size(); i++) {
+                User u = visited.get(i);
+                int friends = graph.neighborIds(u.getId()).size();
+                String mark = u.getId().equals(u2) ? "  <-- [ĐÍCH ĐẾN]" : (u.getId().equals(u1) ? "  <-- [XUẤT PHÁT]" : "");
+                sb.append(String.format("   %2d. %-18s [ID: %-5s]   (Số bạn bè: %d)%s\n", (i + 1), u.getName(), u.getId(), friends, mark));
+            }
+            sb.append("\n👉 Chuỗi thứ tự duyệt:\n   ");
+            sb.append(visited.stream().map(u -> u.getName() + " (" + u.getId() + ")").collect(Collectors.joining("  ⟶  ")));
+            sb.append("\n\n");
+
+            if (path.isEmpty()) {
+                sb.append("⚠️ Không tìm thấy đường đi từ đỉnh xuất phát tới đỉnh đích (2 đỉnh không liên thông)!\n");
+            } else {
+                sb.append(String.format("👉 Đường đi tìm được từ Nguồn đến Đích (Đường ngắn nhất bằng BFS - %d cạnh):\n   ", path.size() - 1));
+                sb.append(path.stream().map(u -> u.getName() + " (" + u.getId() + ")").collect(Collectors.joining("  ⟶  ")));
+                sb.append("\n");
+            }
+            sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+            outputArea.setText(sb.toString());
+        }));
+
+        Button btnDfsTarget = createStyledButton("🔍 Duyệt DFS (Nguồn ➔ Đích)", "#faf5ff", "#6b21a8", "#e9d5ff");
+        btnDfsTarget.setOnAction(e -> act(() -> {
+            String u1 = requireSourceId();
+            String u2 = requireTargetId();
+            long startTime = System.nanoTime();
+            List<User> visited = DfsAndPathAlgorithms.dfs(graph, u1, u2);
+            List<User> path = DfsAndPathAlgorithms.dfsPath(graph, u1, u2);
+            long endTime = System.nanoTime();
+            double durationMs = (endTime - startTime) / 1_000_000.0;
+
+            graphPane.highlightTraversalAndPath(visited, path);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+            sb.append("📌 THUẬT TOÁN DUYỆT THEO CHIỀU SÂU (DFS) TỪ NGUỒN ĐẾN ĐÍCH\n");
+            sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+            sb.append(String.format("⏱ Thời gian chạy: %.3f ms\n", durationMs));
+            sb.append(String.format("🚩 Đỉnh xuất phát (Nguồn): %s (%s)   ⟶   🎯 Đỉnh đích: %s (%s)\n",
+                    graph.requireUser(u1).getName(), u1, graph.requireUser(u2).getName(), u2));
+            sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+
+            sb.append(String.format("👉 Thứ tự các đỉnh duyệt DFS (cho đến khi gặp đích - tổng %d đỉnh):\n", visited.size()));
+            for (int i = 0; i < visited.size(); i++) {
+                User u = visited.get(i);
+                int friends = graph.neighborIds(u.getId()).size();
+                String mark = u.getId().equals(u2) ? "  <-- [ĐÍCH ĐẾN]" : (u.getId().equals(u1) ? "  <-- [XUẤT PHÁT]" : "");
+                sb.append(String.format("   %2d. %-18s [ID: %-5s]   (Số bạn bè: %d)%s\n", (i + 1), u.getName(), u.getId(), friends, mark));
+            }
+            sb.append("\n👉 Chuỗi thứ tự duyệt:\n   ");
+            sb.append(visited.stream().map(u -> u.getName() + " (" + u.getId() + ")").collect(Collectors.joining("  ⟶  ")));
+            sb.append("\n\n");
+
+            if (path.isEmpty()) {
+                sb.append("⚠️ Không tìm thấy đường đi từ đỉnh xuất phát tới đỉnh đích (2 đỉnh không liên thông)!\n");
+            } else {
+                sb.append(String.format("👉 Đường đi tìm được từ Nguồn đến Đích (Đường đi theo DFS - %d cạnh):\n   ", path.size() - 1));
+                sb.append(path.stream().map(u -> u.getName() + " (" + u.getId() + ")").collect(Collectors.joining("  ⟶  ")));
+                sb.append("\n");
+            }
+            sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+            outputArea.setText(sb.toString());
+        }));
+
+        Button btnPath = createStyledButton("🚩 Đường ngắn nhất", "#fff7ed", "#9a3412", "#fed7aa");
         btnPath.setOnAction(e -> show("Đường đi ngắn nhất giữa 2 người (BFS)", () -> {
             String u1 = requireSourceId();
             String u2 = requireTargetId();
@@ -278,10 +366,9 @@ public final class SocialGraphApp extends Application {
             return path;
         }));
 
-        HBox twoPersonActionBox = new HBox(8, btnConnect, btnDisconnect, btnCommon, btnPath);
-        twoPersonActionBox.setAlignment(Pos.CENTER_LEFT);
+        FlowPane twoPersonActionBox = new FlowPane(8, 8, btnConnect, btnDisconnect, btnCommon, btnBfsTarget, btnDfsTarget, btnPath);
 
-        // Các nút thuật toán cho Người 1 (Nguồn)
+        // Các nút thuật toán trên Đỉnh xuất phát (Người 1)
         Button btnFriends = createStyledButton("📋 Xem bạn bè", "#eff6ff", "#1e40af", "#bfdbfe");
         btnFriends.setOnAction(e -> show("Danh sách bạn bè của Người 1", () -> {
             String id = requireSourceId();
@@ -306,16 +393,16 @@ public final class SocialGraphApp extends Application {
             return list;
         }));
 
-        Button btnBfs = createStyledButton("🔍 Duyệt BFS", "#f0f9ff", "#075985", "#bae6fd");
-        btnBfs.setOnAction(e -> show("Thứ tự duyệt toàn bộ đồ thị theo BFS từ Người 1", () -> {
+        Button btnBfsAll = createStyledButton("🌐 Duyệt toàn bộ BFS", "#f0f9ff", "#075985", "#bae6fd");
+        btnBfsAll.setOnAction(e -> show("Thứ tự duyệt toàn bộ thành phần liên thông theo BFS từ Người 1", () -> {
             String id = requireSourceId();
             List<User> list = BfsAlgorithms.bfs(graph, id);
             graphPane.highlightUsers(list);
             return list;
         }));
 
-        Button btnDfs = createStyledButton("🔍 Duyệt DFS", "#ecfeff", "#155e75", "#a5f3fc");
-        btnDfs.setOnAction(e -> show("Thứ tự duyệt toàn bộ đồ thị theo DFS từ Người 1", () -> {
+        Button btnDfsAll = createStyledButton("🌐 Duyệt toàn bộ DFS", "#ecfeff", "#155e75", "#a5f3fc");
+        btnDfsAll.setOnAction(e -> show("Thứ tự duyệt toàn bộ thành phần liên thông theo DFS từ Người 1", () -> {
             String id = requireSourceId();
             List<User> list = DfsAndPathAlgorithms.dfs(graph, id);
             graphPane.highlightUsers(list);
@@ -325,7 +412,7 @@ public final class SocialGraphApp extends Application {
         Button btnClearHighlight = createStyledButton("✨ Bỏ Highlight", "#f8fafc", "#475569", "#cbd5e1");
         btnClearHighlight.setOnAction(e -> graphPane.clearHighlights());
 
-        FlowPane onePersonActionBox = new FlowPane(8, 8, btnFriends, btnSuggestBfs, btnSuggestDfs, btnBfs, btnDfs, btnClearHighlight);
+        FlowPane onePersonActionBox = new FlowPane(8, 8, btnFriends, btnSuggestBfs, btnSuggestDfs, btnBfsAll, btnDfsAll, btnClearHighlight);
 
         VBox actionSection = createCard("Thao Tác Quan Hệ & Thuật Toán Đồ Thị",
                 new VBox(8, selectorBox, twoPersonActionBox, new Separator(), onePersonActionBox));

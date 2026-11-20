@@ -14,6 +14,14 @@ class DfsAndPathAlgorithmsTest {
         assertEquals(List.of("u1", "u2", "u3", "u4"), ids(DfsAndPathAlgorithms.dfs(sampleGraph(), "u1")));
     }
 
+    @Test void traversesGraphByDepthToTarget() {
+        assertEquals(List.of("u1", "u2", "u3"), ids(DfsAndPathAlgorithms.dfs(sampleGraph(), "u1", "u3")));
+    }
+
+    @Test void findsDfsPath() {
+        assertEquals(List.of("u1", "u2", "u3", "u4"), ids(DfsAndPathAlgorithms.dfsPath(sampleGraph(), "u1", "u4")));
+    }
+
     @Test void findsShortestPath() {
         assertEquals(List.of("u1", "u2", "u3", "u4"),
                 ids(DfsAndPathAlgorithms.shortestPath(sampleGraph(), "u1", "u4")));
