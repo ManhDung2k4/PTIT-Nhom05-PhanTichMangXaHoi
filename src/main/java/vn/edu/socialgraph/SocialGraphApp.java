@@ -651,13 +651,40 @@ public final class SocialGraphApp extends Application {
         chooser.setTitle("Lưu Mạng Xã Hội Vào File CSV");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files (*.csv)", "*.csv"));
         chooser.setInitialFileName("social-network.csv");
+
+        File defaultDir = new File(System.getProperty("user.dir"));
+        if (defaultDir.exists() && defaultDir.isDirectory()) {
+            chooser.setInitialDirectory(defaultDir);
+        }
+
         File file = chooser.showSaveDialog(stage);
         if (file != null) {
             act(() -> {
                 try {
                     repository.save(graph, file.toPath());
-                    outputArea.setText("✅ Đã lưu dữ liệu mạng xã hội thành công vào tập tin:\n" + file.getAbsolutePath());
+                    int vCount = graph.getUserCount();
+                    int eCount = graph.getEdgeCount();
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                    sb.append("💾 ĐÃ LƯU DỮ LIỆU RA TẬP TIN CSV THÀNH CÔNG!\n");
+                    sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+                    sb.append(String.format("📁 Đường dẫn tập tin: %s\n", file.getAbsolutePath()));
+                    sb.append(String.format("📊 Thống kê đã lưu: %d người dùng (|V|) và %d quan hệ bạn bè (|E|)\n", vCount, eCount));
+                    sb.append("💡 Định dạng chuẩn: Dòng U (User/Đỉnh), Dòng F (Friendship/Cạnh) - UTF-8 RFC 4180\n");
+                    sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                    outputArea.setText(sb.toString());
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                            String.format("Đã lưu thành công %d người dùng và %d liên kết bạn bè vào tập tin:\n%s",
+                                    vCount, eCount, file.getName()), ButtonType.OK);
+                    alert.setTitle("Lưu file thành công");
+                    alert.setHeaderText("Xuất dữ liệu CSV thành công!");
+                    alert.showAndWait();
                 } catch (Exception ex) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Lỗi khi lưu file: " + ex.getMessage(), ButtonType.OK);
+                    errorAlert.setTitle("Lỗi lưu file");
+                    errorAlert.showAndWait();
                     throw new RuntimeException("Không thể lưu file: " + ex.getMessage(), ex);
                 }
             });
@@ -668,17 +695,57 @@ public final class SocialGraphApp extends Application {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Mở Dữ Liệu Mạng Xã Hội Từ File CSV");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files (*.csv)", "*.csv"));
+
+        File defaultDir = new File(System.getProperty("user.dir"));
+        if (defaultDir.exists() && defaultDir.isDirectory()) {
+            chooser.setInitialDirectory(defaultDir);
+        }
+
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
             act(() -> {
                 try {
                     graph = repository.load(file.toPath());
-                    setSourceUser(graph.getUsers().stream().findFirst().orElse(null));
-                    setTargetUser(null);
+
+                    List<User> userList = List.copyOf(graph.getUsers());
+                    if (!userList.isEmpty()) {
+                        setSourceUser(userList.get(0));
+                        setTargetUser(userList.size() > 1 ? userList.get(userList.size() - 1) : null);
+                    } else {
+                        setSourceUser(null);
+                        setTargetUser(null);
+                    }
                     refresh();
-                    outputArea.setText("✅ Đã tải dữ liệu thành công từ tập tin:\n" + file.getAbsolutePath() +
-                            String.format("\nĐã nạp: %d người dùng, %d quan hệ bạn bè.", graph.getUserCount(), graph.getEdgeCount()));
+
+                    int vCount = graph.getUserCount();
+                    int eCount = graph.getEdgeCount();
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                    sb.append("📂 ĐÃ NẠP DỮ LIỆU TỪ TẬP TIN CSV THÀNH CÔNG!\n");
+                    sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+                    sb.append(String.format("📁 Đường dẫn tập tin: %s\n", file.getAbsolutePath()));
+                    sb.append(String.format("📊 Thống kê đã nạp: %d người dùng (|V|) và %d quan hệ bạn bè (|E|)\n", vCount, eCount));
+                    sb.append("────────────────────────────────────────────────────────────────────────────────\n");
+                    sb.append("👉 Danh sách người dùng được nạp vào đồ thị:\n");
+                    for (int i = 0; i < userList.size(); i++) {
+                        User u = userList.get(i);
+                        int friends = graph.neighborIds(u.getId()).size();
+                        sb.append(String.format("   %2d. %-18s [ID: %-5s]   (Số bạn bè: %d)\n", (i + 1), u.getName(), u.getId(), friends));
+                    }
+                    sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                    outputArea.setText(sb.toString());
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                            String.format("Đã nạp thành công %d người dùng và %d liên kết bạn bè từ tập tin:\n%s",
+                                    vCount, eCount, file.getName()), ButtonType.OK);
+                    alert.setTitle("Nạp file thành công");
+                    alert.setHeaderText("Nạp dữ liệu CSV thành công!");
+                    alert.showAndWait();
                 } catch (Exception ex) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Lỗi khi đọc file CSV: " + ex.getMessage(), ButtonType.OK);
+                    errorAlert.setTitle("Lỗi nạp file");
+                    errorAlert.showAndWait();
                     throw new RuntimeException("Không thể đọc file: " + ex.getMessage(), ex);
                 }
             });

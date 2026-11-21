@@ -65,20 +65,21 @@ public final class CsvGraphRepository {
         SocialGraph graph = new SocialGraph();
         List<List<String>> rows = Files.readAllLines(file, StandardCharsets.UTF_8).stream()
                 .filter(line -> !line.isBlank())
+                .map(line -> line.startsWith("\uFEFF") ? line.substring(1) : line)
                 .map(this::parse)
                 .toList();
 
         // Nạp người dùng trước (Vertex)
         for (List<String> row : rows) {
-            if (row.size() == 3 && "U".equals(row.get(0))) {
-                graph.addUser(new User(row.get(1), row.get(2)));
+            if (row.size() >= 3 && "U".equalsIgnoreCase(row.get(0).trim())) {
+                graph.addUser(new User(row.get(1).trim(), row.get(2).trim()));
             }
         }
 
         // Sau đó kết nối các cạnh (Edge)
         for (List<String> row : rows) {
-            if (row.size() == 3 && "F".equals(row.get(0))) {
-                graph.connect(row.get(1), row.get(2));
+            if (row.size() >= 3 && "F".equalsIgnoreCase(row.get(0).trim())) {
+                graph.connect(row.get(1).trim(), row.get(2).trim());
             }
         }
         return graph;

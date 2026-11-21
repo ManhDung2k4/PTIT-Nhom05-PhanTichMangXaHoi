@@ -39,4 +39,16 @@ class CsvGraphRepositoryTest {
         assertEquals("Nguyễn, An \"A\"", loaded.requireUser("u1").getName());
         assertEquals(List.of("u2"), loaded.friendsOf("u1").stream().map(User::getId).toList());
     }
+
+    @Test void handlesBomAndWhitespace(@TempDir Path dir) throws Exception {
+        Path file = dir.resolve("bom.csv");
+        java.nio.file.Files.writeString(file, "\uFEFFU , \"u1\" , \"An\"\nU , \"u2\" , \"Bình\"\nF , \"u1\" , \"u2\"\n");
+        CsvGraphRepository repository = new CsvGraphRepository();
+        SocialGraph loaded = repository.load(file);
+
+        assertEquals(2, loaded.getUsers().size());
+        assertEquals("An", loaded.requireUser("u1").getName());
+        assertEquals("Bình", loaded.requireUser("u2").getName());
+        org.junit.jupiter.api.Assertions.assertTrue(loaded.hasEdge("u1", "u2"));
+    }
 }
